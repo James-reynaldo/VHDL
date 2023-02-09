@@ -96,7 +96,8 @@ architecture Behavioral of SPI_Example is
     end component;              
 begin
     
-    
+    i1 : sine_lut
+			port map(clk=> clk, rst=> rst, o_sine => sinLUT);
     sinLUT <= std_logic_vector(lut_sig) when state_sine='0' else -- assign sine value
     std_logic_vector(5000-lut_sig); --180 rotation
     to_send <= reg & sinLUT; -- complete message
