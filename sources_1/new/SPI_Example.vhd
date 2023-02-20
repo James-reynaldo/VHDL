@@ -21,11 +21,9 @@
 
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.numeric_std.all;
-
 -- Uncomment the following library declaration if using
 -- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 -- Uncomment the following library declaration if instantiating
 -- any Xilinx leaf cells in this code.
@@ -43,17 +41,16 @@ end SPI_Example;
 
 architecture Behavioral of SPI_Example is
    
-    
     signal inclk : std_logic;
     signal sinLUT : std_logic_vector(11 downto 0);--sine wave out
     signal cs_intern : std_logic := '0';
     signal sclk_intern :STD_LOGIC :='0'; --clk_out
     signal mosi_intern : std_logic :='0';
-  
+    signal clk_out :std_logic;
     component sine_lut
             port( clk : in STD_LOGIC;
                   rst : in STD_LOGIC;
-                  o_sine : out STD_LOGIC_VECTOR (15 downto 0));  
+                  o_sine : out STD_LOGIC_VECTOR (11 downto 0));  
     end component;
     component spi_int
            Port ( sin_in : in std_logic_vector(11 downto 0);
@@ -62,13 +59,27 @@ architecture Behavioral of SPI_Example is
            cs : out STD_LOGIC;
            MOSI : out STD_LOGIC;
            ask : out STD_LOGIC);  
-    end component;                  
+    end component;   
+component clk_wiz_0
+port
+ (-- Clock in ports
+  -- Clock out ports
+  clk_out1          : out    std_logic;
+  clk_in1           : in     std_logic
+ );
+end component;                  
 begin
-    
+   your_instance_name : clk_wiz_0
+   port map ( 
+  -- Clock out ports  
+   clk_out1 => clk_out,
+   -- Clock in ports
+   clk_in1 => clk
+ );
     i1 : sine_lut
 			port map(clk=> inclk, rst=> rst, o_sine => sinLUT);
 	i0 : spi_int
-	        port map(sin_in=>sinLUT,clk=> clk, sclk=>sclk, cs=>cs, MOSI=> Mosi, ask=>inclk);		
+	        port map(sin_in=>sinLUT,clk=> clk_out, sclk=>sclk_intern, cs=>cs_intern, MOSI=> mosi_intern, ask=>inclk);		
    
         
     cs <= cs_intern;

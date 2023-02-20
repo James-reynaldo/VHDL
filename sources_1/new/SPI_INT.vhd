@@ -55,8 +55,10 @@ signal cs_intern : std_logic := '0';
 signal sclk_intern :STD_LOGIC :='0'; --clk_out
 signal mosi_intern : std_logic :='0';
 
+signal ask_intern : std_logic :='1';
+
 begin
-    comp_send <= reg & sin_in; -- complete message
+     comp_send <= reg & sin_in; -- complete message
      sendword : process(clk)
      begin
      if rising_edge(clk) then
@@ -79,6 +81,7 @@ begin
                     bit16counter <= "1111";
                     mosi_intern <= comp_send(15);
                     state <= transfer;
+                    ask_intern <= '0';
                     
                 when transfer =>
                     if(sclk_intern = '0') then
@@ -98,12 +101,14 @@ begin
                         sclk_intern <= '0';
                         mosi_intern<= '0';
                         state <= idle;
+                        ask_intern <= '1';
                     end if;
                                 
             end case;
                 
         end if;                        
      end process;
+    ask <= ask_intern;
     cs <= cs_intern;
     sclk <= sclk_intern;
     mosi <= mosi_intern;     
